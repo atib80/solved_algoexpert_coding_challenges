@@ -1,2 +1,13 @@
-# solved_algoexpert_coding_challenges
-In this code repository you can find my alternative solutions to all the algoexpert coding challenges that I have solved so far using modern C++ language features (C++11, C++14,  C++ 17 language standards).
+# Solved Algoexpert coding challenges
+
+This code repository's mission is to keep track of all the Algoexpert coding challenges I have solved so far. As time goes by it will be continuously updated with newer solved coding challenges.
+
+Algoexpert's coding challenges are categorized into 4 groups accoding to their difficulty level:
+
+I. Easy
+
+II. Medium
+
+III. Hard
+
+IV. Very Hard
