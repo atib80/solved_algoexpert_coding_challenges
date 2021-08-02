@@ -179,9 +179,15 @@ class valid_ip_address_generator {
 };
 
 std::vector<std::string> validIPAddresses(const std::string& str) {
-  const valid_ip_address_generator gen{str};
+  valid_ip_address_generator ip_address_generator{str};
 
-  return gen.get_all_valid_ip_addresses();
+  std::vector<std::string> valid_ip_addresses;
+
+  for (auto&& valid_ip : ip_address_generator) {
+    valid_ip_addresses.emplace_back(std::move(valid_ip));
+  }
+
+  return valid_ip_addresses;
 }
 
 int main() {
