@@ -42,7 +42,6 @@ class valid_ip_address_generator {
       size_t pos{};
       std::string ip_address;
       ip_address.reserve(max_ip_address_length);
-      bool is_valid{true};
 
       for (const char s : state_) {
         std::string ip_part;
@@ -55,18 +54,15 @@ class valid_ip_address_generator {
           ip_part.push_back(ip_address_digits_[k]);
         }
 
-        if (!(ip_part.length() >= 1U && ip_part.length() <= 3U) ||
-            ('0' == ip_part[0] && ip_part.length() != 1U) ||
-            stoi(ip_part) > 255) {
-          is_valid = false;
+        if (('0' == ip_part[0] && ip_part.length() != 1U) ||
+            stoi(ip_part) > 255)
           break;
-        }
 
         ip_address += ip_part;
         pos += s - '0';
       }
 
-      if (is_valid)
+      if (ip_address_digits_.length() == pos)
         valid_ip_addresses_.emplace_back(std::move(ip_address));
     }
   }
