@@ -1,11 +1,11 @@
+#include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <set>
 #include <vector>
 
 using namespace std;
 
-/* input matrix (n x n):
+/* input matrix (N x N):
 
 [1, 1, 1, 0, 1, 0]
 [0, 0, 0, 0, 0, 1]
@@ -15,68 +15,64 @@ using namespace std;
 [0, 0, 0, 0, 0, 1]
 
 output: true
+
+asymptotic time complexity: O(N^3 * lgN)
+asymptotic space complexity: O(1)
 */
 
-bool check_if_square_of_zeroes_exists(
-    const size_t x1,
-    const size_t y1,
-    const size_t N,
-    const vector<set<size_t>>& row_ones_coordinates,
-    const vector<set<size_t>>& col_ones_coordinates) {
-  const size_t max_square_width{min(N - x1, N - y1)};
-  for (size_t i{2}; i <= max_square_width; ++i) {
-    auto itr1 = row_ones_coordinates[x1].upper_bound(y1);
-    auto itr2 = col_ones_coordinates[y1].upper_bound(x1);
+bool check_if_matrix_column_consists_of_zeroes(
+  const vector<vector<int>> &matrix,
+  const size_t x,
+  const size_t y,
+  const size_t max_height_to_check)
+{
 
-    if ((itr1 != cend(row_ones_coordinates[x1]) && *itr1 <= y1 + i - 1) ||
-        (itr2 != cend(col_ones_coordinates[y1]) && *itr2 <= x1 + i - 1))
+  for (size_t low{ x }, high{ std::min(x + max_height_to_check, matrix.size()) - 1 }; low <= high; ) {
+    const size_t middle{ (low + high) / 2 };
+    if (0 != matrix[middle][y])
+        return false;
+
+    low = middle + 1;
+  }
+
+  return true;
+}
+
+bool check_if_square_of_zeroes_exists(const vector<vector<int>> &matrix,
+  const size_t x1,
+  const size_t y1,
+  const size_t N)
+{
+  const size_t max_square_width{ min(N - x1, N - y1) };
+  for (size_t i{ 2 }; i <= max_square_width; ++i) {
+    auto itr1 =
+      upper_bound(cbegin(matrix[x1]) + y1, cbegin(matrix[x1]) + y1 + i, 0);
+
+    if ((itr1 != (cbegin(matrix[x1]) + y1 + i)) || !check_if_matrix_column_consists_of_zeroes(matrix, x1, y1, i))
       return false;
-    itr1 = row_ones_coordinates[x1 + i - 1].upper_bound(y1);
-    itr2 = col_ones_coordinates[y1 + i - 1].upper_bound(x1);
-    if ((itr1 == cend(row_ones_coordinates[x1 + i - 1]) ||
-         *itr1 > y1 + i - 1) &&
-        (itr2 == cend(col_ones_coordinates[y1 + i - 1]) || *itr2 > x1 + i - 1))
+    itr1 = upper_bound(cbegin(matrix[x1 + i - 1]) + y1,
+      cbegin(matrix[x1 + i - 1]) + y1 + i,
+      0);
+    if (itr1 == (cbegin(matrix[x1 + i - 1]) + y1 + i) && check_if_matrix_column_consists_of_zeroes(matrix, x1, y1 + i - 1, i))
       return true;
   }
 
   return false;
 }
 
-bool squareOfZeroes(const vector<vector<int>>& matrix) {
+bool squareOfZeroes(const vector<vector<int>> &matrix)
+{
   if (matrix.size() <= 1)
     return false;
 
-  const size_t N{matrix.size()};
-
-  vector<set<size_t>> row_ones_coordinates(N), col_ones_coordinates(N);
-
-  for (size_t i{}; i < N; ++i) {
-    for (size_t j{}; j < N; ++j) {
-      if (matrix[i][j] == 1) {
-        row_ones_coordinates[i].emplace(j);
-        col_ones_coordinates[j].emplace(i);
-      }
-    }
-  }
+  const size_t N{ matrix.size() };
 
   for (size_t i{}; i < N - 1; ++i) {
     for (size_t j{}; j < N - 1; ++j) {
-      if (matrix[i][j] == 0 &&
-          check_if_square_of_zeroes_exists(i, j, N, row_ones_coordinates,
-                                           col_ones_coordinates))
+      if (matrix[i][j] == 0 && check_if_square_of_zeroes_exists(matrix, i, j, N))
         return true;
     }
   }
 
   return false;
-}
-
-int main() {
-  vector<vector<int>> matrix{{1, 1, 1, 0, 1, 0}, {0, 0, 0, 0, 0, 1},
-                             {0, 1, 1, 1, 0, 1}, {0, 0, 0, 1, 0, 1},
-                             {0, 1, 1, 1, 0, 1}, {0, 0, 0, 0, 0, 1}};
-
-  cout << boolalpha << squareOfZeroes(matrix) << endl;
-
-  return 0;
 }
