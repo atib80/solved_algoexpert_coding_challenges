@@ -24,18 +24,20 @@ void print_sequence(ForwardIteratorType first,
 
 vector<int> sortedSquaredArray(const vector<int>& array) {
   auto src_first = cbegin(array);
-  auto src_last = --cend(array);
+  auto src_last = cend(array);
 
   vector<int> result(array.size());
 
   auto dst_last = end(result);
 
-  while (src_first <= src_last) {
-    if (abs(*src_first) > abs(*src_last)) {
+  while (src_first != src_last) {
+    auto last{src_last};
+    --last;
+    if (abs(*src_first) > abs(*last)) {
       *--dst_last = *src_first * *src_first;
       ++src_first;
     } else {
-      *--dst_last = *src_last * *src_last;
+      *--dst_last = *last * *last;
       --src_last;
     }
   }
